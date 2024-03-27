@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { DataType } from "./types";
+import { DataType } from "../types/types";
 
 export const useDataQuery = () =>
   useQuery({

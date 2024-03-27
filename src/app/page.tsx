@@ -6,6 +6,8 @@ import Box from "@mui/material/Box";
 import TablePagination from "@mui/material/TablePagination";
 import { Typography } from "@mui/material";
 import { useDataQuery } from "@/utils/queries";
+import { formatNumberToThousands } from "@/utils/formater";
+import Link from "next/link";
 
 export default function Home() {
   const { data, isLoading, isSuccess } = useDataQuery();
@@ -22,6 +24,11 @@ export default function Home() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  React.useEffect(() => {
+    isLoading
+      ? console.log("How about adding a pagination, UI designer?")
+      : null;
+  });
   return (
     <main>
       <Box
@@ -43,7 +50,7 @@ export default function Home() {
             padding: 3,
           }}
         >
-          <h1>Currency Rate Table</h1>
+          <h1> Rate Table (TWD)</h1>
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
             <Typography>Currency</Typography>
             <Typography>Price</Typography>
@@ -57,7 +64,9 @@ export default function Home() {
             width: " -webkit-fill-available",
           }}
         >
-          {isLoading && <Box sx={{textAlign:'center', fontSize:'40'}}> Loading... </Box>}
+          {isLoading && (
+            <Box sx={{ textAlign: "center", fontSize: "40" }}> Loading... </Box>
+          )}
           {isSuccess && (
             <Box aria-label="Currency Exchange Rate table">
               {data
@@ -82,16 +91,14 @@ export default function Home() {
                       <Typography>{row.currency}</Typography>
                     </Box>
                     <Box>
-                      <Typography>{row.twd_price}</Typography>
+                      <Typography>
+                        {formatNumberToThousands(row.twd_price)}
+                      </Typography>
                     </Box>
                   </Box>
                 ))}
             </Box>
           )}
-          <table>
-            <tbody></tbody>
-            <tfoot></tfoot>
-          </table>
         </Box>
         <TablePagination
           component="div"
@@ -99,6 +106,7 @@ export default function Home() {
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
+          rowsPerPageOptions={[10, 15, 25]}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
         <div>
@@ -113,13 +121,19 @@ export default function Home() {
               padding: 3,
             }}
           >
-            <a href="/CurrencyConversion">Rate Conversion</a>
+            <Link
+              href="/CurrencyConversion"
+              style={{
+                color: "black",
+                fontSize: "x-large",
+                textDecoration: "none",
+              }}
+            >
+              Rate Conversion
+            </Link>
           </Button>
         </div>
       </Box>
-      <a href="/currency-selection">
-        <h1>Currency Selection Page</h1>
-      </a>
     </main>
   );
 }

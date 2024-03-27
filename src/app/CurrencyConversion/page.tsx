@@ -1,176 +1,128 @@
 "use client";
 import * as React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import TextField from "@mui/material/TextField";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputAdornment from "@mui/material/InputAdornment";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import IconButton from "@mui/material/IconButton";
-import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import { useDataQuery } from "@/utils/queries";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import { DataType } from "@/types/types";
+import { CurrencyItem } from "@/components/CurrencyItem";
+import { useRouter } from "next/navigation";
 
 export default function RateConversionCard() {
-  const { data, isLoading, isSuccess } = useDataQuery();
-  const [amount, setAmount] = React.useState("");
-  const [currencyFrom, setCurrencyFrom] = React.useState("GHS");
-  const [currencyTo, setCurrencyTo] = React.useState("LKR");
-  const [conversionResult, setConversionResult] = React.useState("");
+  const { data, isSuccess } = useDataQuery();
+  const [fromValue, setFromValue] = React.useState(0);
+  const [fromCurrency, setFromCurrency] = React.useState<DataType | null>(null);
+  const [toValue, setToValue] = React.useState(0);
+  const [toCurrency, setToCurrency] = React.useState<DataType | null>(null);
+  const router = useRouter();
 
-  const handleCurrencyChangeFrom = (
-    event: React.ChangeEvent<string>,
-    child: React.ReactNode
-  ) => {
-    setCurrencyFrom(event.target.value);
-    // Perform conversion if needed
+  const handleIconClick = () => {
+    router.push('/CurrencySelection'); 
   };
+  const MaxDecimal =
+    fromCurrency && toCurrency
+      ? Math.max(
+          parseInt(fromCurrency.amount_decimal),
+          parseInt(toCurrency.amount_decimal)
+        )
+      : 0;
+  const currencyRatio =
+    fromCurrency && toCurrency
+      ? parseFloat(
+          (fromCurrency.twd_price / toCurrency.twd_price).toFixed(MaxDecimal)
+        )
+      : 0;
 
-  const handleCurrencyChangeTo = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setCurrencyTo(event.target.value);
-    // Perform conversion if needed
+  const handleChangeValue = (newFromValue: number) => {
+    if (!currencyRatio) return;
+    if (newFromValue !== fromValue) {
+      setFromValue(newFromValue);
+      setToValue(newFromValue * currencyRatio);
+    }
   };
-
-  const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(event.target.value);
-    // Perform conversion if needed
-  };
-
-  const performConversion = () => {
-    // Logic to perform conversion
-  };
-
-  React.useEffect(() => {
-    performConversion();
-  }, [amount, currencyFrom, currencyTo]);
 
   return (
-    <Card sx={{ minWidth: 275, maxWidth: 500, m: 2 }}>
-      <CardContent>
-        <Typography
-          sx={{ fontSize: 25, textAlign: "center" }}
-          color="black"
-          gutterBottom
-        >
-          Rate Conversion
-        </Typography>
+    <Box
+      sx={{
+        width: 400,
+        height: 800,
+        borderStyle: "solid",
+        borderColor: "black",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "column",
+        textAlign: "center",
+        position: "relative",
+      }}
+    >
+      <Box
+        sx={{
+          overflowX: "auto",
+          width: " -webkit-fill-available",
+          borderBottom: 1,
+          padding: 2,
+        }}
+      >
+        <h1> Rate Conversion </h1>
+      </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
+      <Box
+        sx={{
+          border: 1,
+          margin: 3,
+          borderRadius: 3,
+          width: 350,
+          position: "relative",
+        }}
+      >
+        <CurrencyItem
+          currencies={data}
+          currentCurrency={fromCurrency}
+          onCurrencyChange={(currency) => {
+            setFromCurrency(currency);
           }}
+          value={fromValue}
+          onValueChange={(value) => handleChangeValue(value)}
+        />
+
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: "37%",
+            display: "flex",
+            left: "15%",
+            background: "white",
+            color: "black",
+            padding: 0,
+          }}
+          onClick={handleIconClick}
         >
-          <Select
-            value={currencyFrom}
-            onChange={handleCurrencyChangeFrom}
-            sx={{ width: "auto", flexGrow: 1 }}
-            IconComponent={ArrowDropDownIcon}
-            inputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyExchangeIcon /> {/* Replace with your actual icon */}
-                </InputAdornment>
-              ),
+          <ExpandCircleDownIcon sx={{ width: 70, height: 70 }} />
+        </IconButton>
+
+        {fromCurrency && toCurrency && (
+          <Box
+            sx={{
+              position: "absolute",
+              right: -10,
+              top: "40%",
+              pr: 4,
+              pb: 0.5,
             }}
           >
-            {data?.map((item) => (
-              <MenuItem value="GHS" key={item.id}>
-                {item.currency}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            value={amount}
-            onChange={handleAmountChange}
-            sx={{
-              flexGrow: 2,
-              ".MuiInputBase-input": {
-                textAlign: "right",
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <ArrowDropDownIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            margin="normal"
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "spaceEvenly",
+            <Typography>{`1 ${fromCurrency.currency} ≈ ${currencyRatio} ${toCurrency.currency}`}</Typography>
+          </Box>
+        )}
+        <CurrencyItem
+          currencies={data}
+          currentCurrency={toCurrency}
+          onCurrencyChange={(currency) => {
+            setToCurrency(currency);
           }}
-        >
-          <IconButton>
-            <ExpandCircleDownIcon  sx={{ width: 60, height: 60 }}/>
-          </IconButton>
-          <Typography>{currencyFrom}</Typography>
-          <Typography>≈</Typography>
-          <Typography>{currencyTo}</Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Select
-            value={currencyFrom}
-            onChange={handleCurrencyChangeFrom}
-            sx={{ width: "auto", flexGrow: 1 }}
-            IconComponent={ArrowDropDownIcon}
-            inputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <CurrencyExchangeIcon /> {/* Replace with your actual icon */}
-                </InputAdornment>
-              ),
-            }}
-          >
-            {data?.map((item) => (
-              <MenuItem value="GHS" key={item.id}>
-                {item.currency}
-              </MenuItem>
-            ))}
-          </Select>
-          <TextField
-            value={amount}
-            onChange={handleAmountChange}
-            sx={{
-              flexGrow: 2,
-              ".MuiInputBase-input": {
-                textAlign: "right",
-              },
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <ArrowDropDownIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            margin="normal"
-          />
-        </Box>
-        {/* Add additional elements such as conversion result display here */}
-      </CardContent>
-    </Card>
+          value={toValue}
+        />
+      </Box>
+    </Box>
   );
 }
