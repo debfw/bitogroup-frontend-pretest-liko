@@ -36,7 +36,7 @@ export function CurrencyItem(props: CurrencyItemProps) {
       }}
     >
 
-      <InputLabel sx={{position:'absolute' , top:48, left:15}}>Currency</InputLabel>
+      <InputLabel sx={{position:'absolute' , top:45, left:15}}>Currency</InputLabel>
 
       <Select
         value={props.currentCurrency?.id}
