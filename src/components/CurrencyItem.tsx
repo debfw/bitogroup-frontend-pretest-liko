@@ -85,6 +85,7 @@ export function CurrencyItem(props: CurrencyItemProps) {
               alt="avatar"
               width="30"
               height="30"
+              priority
             ></Image>
             {item.currency}
           </MenuItem>

@@ -87,6 +87,7 @@ export default function Home() {
                         alt="currency-icon"
                         width={50}
                         height={50}
+                        priority
                       />
                       <Typography>{row.currency}</Typography>
                     </Box>
