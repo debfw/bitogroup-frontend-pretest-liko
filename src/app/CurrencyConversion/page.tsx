@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function RateConversionCard() {
   const { data, isSuccess } = useDataQuery();
+  const [hasFirstIndexBeenUsed, setHasFirstIndexBeenUsed] = React.useState(true);
   const [fromValue, setFromValue] = React.useState(0);
   const [fromCurrency, setFromCurrency] = React.useState<DataType | null>(null);
   const [toValue, setToValue] = React.useState(0);
@@ -77,6 +78,7 @@ export default function RateConversionCard() {
         }}
       >
         <CurrencyItem
+         hasFirstIndex={hasFirstIndexBeenUsed}
           currencies={data}
           currentCurrency={fromCurrency}
           onCurrencyChange={(currency) => {
@@ -101,7 +103,7 @@ export default function RateConversionCard() {
           <ExpandCircleDownIcon sx={{ width: 70, height: 70 }} />
         </IconButton>
 
-        {fromCurrency && toCurrency && (
+        {fromCurrency && toCurrency ? (
           <Box
             sx={{
               position: "absolute",
@@ -113,7 +115,15 @@ export default function RateConversionCard() {
           >
             <Typography>{`1 ${fromCurrency.currency} ≈ ${currencyRatio} ${toCurrency.currency}`}</Typography>
           </Box>
-        )}
+        ):  <Box
+        sx={{
+          position: "absolute",
+          right: -10,
+          top: "40%",
+          pr: 4,
+          pb: 0.5,
+        }}
+      ><Typography>{`1 GHS ≈ 0.8519009  LKR`}</Typography></Box>}
         <CurrencyItem
           currencies={data}
           currentCurrency={toCurrency}

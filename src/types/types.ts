@@ -15,4 +15,5 @@ export type CurrencyItemProps = {
   onCurrencyChange: (currency: NullableDataType) => void;
   value: number;
   onValueChange?: (value: number) => void;
+  hasFirstIndex?: boolean; 
 };

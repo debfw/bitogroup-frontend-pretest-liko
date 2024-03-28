@@ -12,17 +12,22 @@ import {
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CurrencyExchangeIcon from "@mui/icons-material/CurrencyExchange";
 import Image from "next/image";
+import { useState } from "react";
 
 export function CurrencyItem(props: CurrencyItemProps) {
+  const [currencyChange, setCurrencyChange] = useState(false);
   const handleOnValueChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (props.onValueChange) props.onValueChange(parseInt(e.target.value));
+    currencyChange && props.onValueChange
+      ? props.onValueChange(parseInt(e.target.value))
+      : alert("Please Select Both Currencies First");
   };
 
   const handleOnCurrencyChange = (e: SelectChangeEvent<string | null>) => {
     const newCurrency = props.currencies?.find((c) => c.id === e.target.value);
     props.onCurrencyChange(newCurrency || null);
+    setCurrencyChange(true);
   };
   return (
     <FormControl
@@ -30,16 +35,20 @@ export function CurrencyItem(props: CurrencyItemProps) {
         display: "flex",
         alignItems: "center",
         gap: 5,
-        borderBottom: 1,
+        borderBottom: props.hasFirstIndex ? 1 : 0,
         padding: "50px 20px",
         flexDirection: "row",
       }}
     >
-
-      <InputLabel sx={{position:'absolute' , top:45, left:15}}>Currency</InputLabel>
-
       <Select
-        value={props.currentCurrency?.id}
+        displayEmpty
+        value={
+          props.currentCurrency
+            ? props.currentCurrency.id
+            : props.hasFirstIndex
+            ? "1"
+            : "2"
+        }
         onChange={handleOnCurrencyChange}
         sx={{
           ".MuiSelect-select": {
@@ -54,7 +63,7 @@ export function CurrencyItem(props: CurrencyItemProps) {
         }}
         IconComponent={ArrowDropDownIcon}
         inputProps={{
-          startAdornment: (
+          startadornment: (
             <InputAdornment position="start">
               <CurrencyExchangeIcon />
             </InputAdornment>
@@ -83,7 +92,7 @@ export function CurrencyItem(props: CurrencyItemProps) {
       </Select>
 
       <TextField
-        value={props.value}
+        value={isNaN(props.value) ? 0 : props.value}
         onChange={handleOnValueChange}
         inputProps={{ sx: { textAlign: "right", height: 15 } }}
         sx={{
