@@ -1,4 +1,5 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Currency Conversion Rate Calculator App
+This project is a demonstration of my ability to design and develop a modern web application using the Next.js framework with TypeScript. It focuses on creating a currency conversion rate calculator app, featuring three main screens and integrating with an external API to fetch currency exchange rates.
 
 ## Getting Started
 
@@ -16,9 +17,28 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The application consists of three primary screens:
+
+1. Currency Exchange Rate Table: Displays exchange rates with TWD (Taiwanese Dollar) as the base currency.
+2. Currency Conversion Page: Allows me to convert amounts between selected currencies based on current exchange rates.
+3. Currency Selection Page: Enables users to select their desired currencies for conversion purposes.
+
+## API Integration
+The currency exchange rate list is fetched from: https://65efcc68ead08fa78a50f929.mockapi.io/api/v1/pairs
+
+## Specifications
+1. Currency prices are formatted with a thousands separator for readability.
+2. Conversion rates are based on TWD, allowing for accurate currency conversions.
+3. Precision for currency amounts adheres to the amount_decimal value, ensuring accurate and rounded-down calculations where necessary.
+
+
+
+## Key Skills Demonstrated
+1. Next.js & TypeScrip
+2. State Management: React Query.
+3. Material-UI (MUI)
+4. Image Optimization:dynamic loading and next Image tag with priority
 
 ## Learn More
 
